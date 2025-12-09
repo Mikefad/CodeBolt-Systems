@@ -1,0 +1,18 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  ArrowUpRight,
+  Bot,
+  LayoutDashboard,
+  PanelsTopLeft,
+  Sparkles,
+  Zap,
+  Gauge,
+  Rocket,
+} from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+...
+
