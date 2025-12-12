@@ -57,6 +57,7 @@ export default function ContactPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status === "sending") return;
+    const form = event.currentTarget;
 
     const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
     const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
@@ -83,7 +84,7 @@ export default function ContactPage() {
     try {
       await emailjs.send(serviceId, templateId, payload, publicKey);
       setStatus("sent");
-      event.currentTarget.reset();
+      form.reset();
       setTimeout(() => setStatus("idle"), 4000);
     } catch (error) {
       console.error("EmailJS error", error);
@@ -189,4 +190,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
