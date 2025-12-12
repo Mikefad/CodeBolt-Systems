@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
 import { Mail, MessageCircle, Phone, Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -42,14 +43,53 @@ const promisePoints = [
   "Transparent scope, pricing, and delivery windows.",
 ];
 
-export default function ContactPage() {
-  const [status, setStatus] = useState<"idle" | "sent">("idle");
+const statusCopy: Record<"idle" | "sending" | "sent" | "error", string> = {
+  idle: "We usually reply inside 24 hours.",
+  sending: "Sending your brief...",
+  sent: "Sent! Expect a reply shortly.",
+  error: "We couldn’t send this. Try again or email hello@codeboltsystems.com.",
+};
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+export default function ContactPage() {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatus("sent");
-    event.currentTarget.reset();
-    setTimeout(() => setStatus("idle"), 2000);
+    if (status === "sending") return;
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      console.error("EmailJS environment variables are missing.");
+      setErrorMessage("Contact form is temporarily unavailable. Email hello@codeboltsystems.com instead.");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    setErrorMessage(null);
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      from_name: (formData.get("name") as string) ?? "",
+      from_email: (formData.get("email") as string) ?? "",
+      company: (formData.get("company") as string) ?? "",
+      message: (formData.get("message") as string) ?? "",
+    };
+
+    try {
+      await emailjs.send(serviceId, templateId, payload, publicKey);
+      setStatus("sent");
+      event.currentTarget.reset();
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (error) {
+      console.error("EmailJS error", error);
+      setErrorMessage("We couldn’t send this. Please retry or email hello@codeboltsystems.com.");
+      setStatus("error");
+    }
   };
 
   return (
@@ -90,13 +130,25 @@ export default function ContactPage() {
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <Input placeholder="Name" required />
-              <Input placeholder="Email or WhatsApp" required />
-              <Input placeholder="Company / Team" />
-              <Textarea placeholder="Tell us about the automation, dashboard, or tool you need." required />
-              <Button type="submit" className="w-full">
-                {status === "sent" ? "Sent! We'll reply shortly." : "Send brief"}
-              </Button>
+              <Input name="name" placeholder="Name" autoComplete="name" required />
+              <Input name="email" type="email" placeholder="Email or WhatsApp" autoComplete="email" required />
+              <Input name="company" placeholder="Company / Team" autoComplete="organization" />
+              <Textarea
+                name="message"
+                placeholder="Tell us about the automation, dashboard, or tool you need."
+                rows={4}
+                required
+              />
+              <div className="space-y-2">
+                <Button type="submit" className="w-full" disabled={status === "sending"}>
+                  {status === "sending" ? "Sending..." : status === "sent" ? "Sent! We'll reply shortly." : "Send brief"}
+                </Button>
+                <p
+                  className={`text-sm ${status === "sent" ? "text-emerald-300" : status === "error" ? "text-rose-300" : "text-white/60"}`}
+                >
+                  {errorMessage ?? statusCopy[status]}
+                </p>
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -137,3 +189,4 @@ export default function ContactPage() {
     </div>
   );
 }
+
