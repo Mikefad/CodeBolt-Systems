@@ -17,9 +17,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const contactChannels = [
-  { icon: Mail, label: "Email", value: "hello@codeboltsystems.com" },
-  { icon: MessageCircle, label: "WhatsApp", value: "+123-456-7890" },
-  { icon: Phone, label: "Phone", value: "+123-456-7890" },
+  { icon: Mail, label: "Email", value: "michealfadairo14@gmail.com" },
+  { icon: MessageCircle, label: "WhatsApp", value: "+234 808 869 2428" },
+  { icon: Phone, label: "Phone", value: "+234 816 438 8579" },
 ];
 
 const faq = [

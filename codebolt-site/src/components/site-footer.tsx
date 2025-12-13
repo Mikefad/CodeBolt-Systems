@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Linkedin, Mail, MessageCircle } from "lucide-react";
+import { Github, Linkedin, Mail, MessageCircle, Phone } from "lucide-react";
 
 const footerLinks = [
   { title: "Services", items: ["Micro-SaaS", "Automations", "Dashboards", "UI Engineering"] },
@@ -7,13 +7,18 @@ const footerLinks = [
 ];
 
 const socials = [
-  { icon: Github, label: "GitHub", href: "https://github.com/codebolt" },
-  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/codebolt" },
+  { icon: Github, label: "GitHub", href: "https://github.com/Mikefad" },
+  {
+    icon: Linkedin,
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/michael-fadairo-292919347/",
+  },
 ];
 
 const contacts = [
-  { icon: Mail, label: "hello@codeboltsystems.com" },
-  { icon: MessageCircle, label: "+123-456-7890 (WhatsApp)" },
+  { icon: Mail, label: "michealfadairo14@gmail.com" },
+  { icon: MessageCircle, label: "+234 808 869 2428 (WhatsApp)" },
+  { icon: Phone, label: "+234 816 438 8579" },
 ];
 
 export function SiteFooter() {
